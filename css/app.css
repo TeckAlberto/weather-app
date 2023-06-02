@@ -1,0 +1,68 @@
+.sand-icon {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  background-color: #f4e3b2;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.sand {
+  width: 80px;
+  height: 80px;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #d8b783;
+  border-radius: 50%;
+}
+
+.grains {
+  width: 80px;
+  height: 80px;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.grains:before {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 10px;
+  background-color: #d8b783;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.grains:after {
+  content: "";
+  display: block;
+  width: 15px;
+  height: 15px;
+  background-color: #d8b783;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.grains:nth-child(1):before,
+.grains:nth-child(2):after {
+  bottom: 20px;
+}
+
+.grains:nth-child(3):before,
+.grains:nth-child(4):after {
+  bottom: 30px;
+}
+
+/* Continúa añadiendo más ".
