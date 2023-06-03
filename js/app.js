@@ -1,27 +1,3 @@
-// Datos de API's
-// ---- openweather ----
-let keyOW;
-fetch('../config.json')
-    .then(response => response.json())
-    .then(result => {
-        keyOW = result.openweather.key;
-    });
-// ---- timezonedb ----
-let keyTM;
-fetch('../config.json')
-    .then(response => response.json())
-    .then(result => {
-        keyTM = result.timezonedb.key;
-    });
-// ---- geonames ----
-let userGN;
-fetch('../config.json')
-    .then(response => response.json())
-    .then(result => {
-        userGN = result.geoname.userName;
-    });
-
-
 const countries = document.querySelector('#countries');
 const cities = document.querySelector('#cities');
 const main = document.querySelector('#main');
@@ -50,28 +26,58 @@ const weathers = {
     'Tornado' : 'tornado',
 }
 
+
+// Datos de API's
+// ---- openweather ----
+let keyOW;
+
+// ---- timezonedb ----
+let keyTM;
+
+// ---- geonames ----
+let userGN;
+
 // EVENTOS
 document.addEventListener('DOMContentLoaded', () => {
-    fetch(`http://api.geonames.org/countryInfoJSON?username=${userGN}`)
-        .then(response => response.json())
-        .then(data => {
-            //const countries = document.getElementById('countries');
 
-            // Recorre la lista de países y agrega opciones al elemento select
-            //console.log(data)
-            data.geonames.forEach(country => {
-                const option = document.createElement('option');
-                option.value = country.countryName;
-                option.text = country.countryName;
-                option.id = country.countryCode;
-                countries.appendChild(option);
-            });
-        })
-        .catch(error => {
+    async function getData() {
+        try {
+            const response = await fetch('../config.json');
+            const data = await response.json();
+
+            keyOW = data.openweather.key;
+            keyTM = data.timezonedb.key;
+            userGN = data.geoname.userName;
+
+            return userGN;
+
+        } catch (error) {
             console.log('Error:', error);
+        }
+    }
+
+    getData()
+        .then(userGN => {
+            // console.log(userGN);
+
+            fetch(`http://api.geonames.org/countryInfoJSON?username=${userGN}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.geonames.forEach(country => {
+                        const option = document.createElement('option');
+                        option.value = country.countryName;
+                        option.text = country.countryName;
+                        option.id = country.countryCode;
+                        countries.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.log('Error:', error);
+                });
         });
-    
 });
+
+
 
 form.addEventListener('submit', showWeather);
 
@@ -201,20 +207,20 @@ function showData(data) {
 
 
     const main = document.createElement('div');
-    main.classList.add('p-2', 'md:flex', 'md:justify-center', 'w-full');
+    main.classList.add('p-2', 'flex', 'md:justify-center', 'w-full', 'flex-col', 'space-y-5');
 
 
     const tempGroup = document.createElement('div');
     tempGroup.classList.add('text-white', 'font-bold', 'sm:flex', 'sm:justify-between', 'sm:items-center', 'p-2', 'w-full', 'space-y-4', 'md:space-y-0');
 
     const tempMin = document.createElement('p');
-    tempMin.innerHTML = `Temperatura minima: <br>${kelvinToCentigrade(data.main.temp_min)} &#8451`;
+    tempMin.innerHTML = `Temperatura minima: <br><span class="font-normal">${kelvinToCentigrade(data.main.temp_min)} &#8451</span>`;
     tempMin.classList.add('text-2xl', 'text-white', 'text-center', 'font-bold')
     const tempMed = document.createElement('p');
-    tempMed.innerHTML = `Temperatura actual: <br>${kelvinToCentigrade(data.main.temp)} &#8451`;
+    tempMed.innerHTML = `Temperatura actual: <br><span class="font-normal">${kelvinToCentigrade(data.main.temp)} &#8451</span>`;
     tempMed.classList.add('text-4xl', 'text-white', 'text-center', 'font-bold', 'py-3')
     const tempMax = document.createElement('p');
-    tempMax.innerHTML = `Temperatura maxima: <br>${kelvinToCentigrade(data.main.temp_max)} &#8451`; 
+    tempMax.innerHTML = `Temperatura maxima: <br><span class="font-normal">${kelvinToCentigrade(data.main.temp_max)} &#8451</span>`; 
     tempMax.classList.add('text-2xl', 'text-white', 'text-center', 'font-bold')
 
     tempGroup.appendChild(tempMin)
@@ -222,17 +228,25 @@ function showData(data) {
     tempGroup.appendChild(tempMax)
 
     const nameCountry = document.createElement('h3');
+    nameCountry.classList.add('text-5xl', 'text-white', 'text-center', 'font-bold', 'my-3')
     nameCountry.textContent = data.name;
 
+    const climate = document.createElement('p');
+    climate.innerHTML = `Clima: <br><span class="font-normal">${weathers[data.weather[0].main]}</span>`; 
+    climate.classList.add('text-2xl', 'text-white', 'text-center', 'font-bold')
 
+    const wind = document.createElement('p');
+    wind.innerHTML = `Velocidad del viento: <br><span class="font-normal">${data.wind.speed}</span>`
+    wind.classList.add('text-2xl', 'text-white', 'text-center', 'font-bold');
 
-
+    main.appendChild(nameCountry);
     main.appendChild(tempGroup);
+    main.appendChild(climate);
+    main.appendChild(wind);
 
 
 
-    const humedity = document.createElement('p');
-    humedity.classList.add('text-sm', 'text-white')
+    
 
 
 
@@ -241,7 +255,7 @@ function showData(data) {
     weatherInfo.appendChild(main);
 
     // console.log(data.weather[0].main);
-    console.log(main);
+    console.log(data);
 
 }
 
